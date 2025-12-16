@@ -7,6 +7,7 @@ export const Auth: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [username, setUsername] = useState('');
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState<{ type: 'error' | 'success', text: string } | null>(null);
@@ -33,11 +34,16 @@ export const Auth: React.FC = () => {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) throw error;
       } else {
+        if (username.length < 3) throw new Error("Le pseudo doit contenir au moins 3 caractères");
+
         const { error } = await supabase.auth.signUp({
           email,
           password,
           options: {
             emailRedirectTo: window.location.origin,
+            data: {
+              username: username
+            }
           }
         });
         if (error) throw error;
@@ -80,6 +86,18 @@ export const Auth: React.FC = () => {
         </div>
 
         <form onSubmit={handleAuth}>
+          {!isLogin && (
+            <Input
+              label="Pseudo"
+              type="text"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              required
+              placeholder="Votre pseudo"
+              className="bg-white"
+            />
+          )}
+
           <Input
             label="Email"
             type="email"

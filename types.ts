@@ -53,4 +53,5 @@ export interface Profile {
   subscription_expires_at: string;
   role: string;
   is_active?: boolean;
+  username?: string;
 }

@@ -302,36 +302,65 @@ export const Dashboard: React.FC = () => {
   return (
     <div className="min-h-screen pb-20 md:pb-8 bg-gray-50">
       {/* Sidebar / Navbar */}
-      <nav className="fixed bottom-0 w-full z-50 bg-white border-t border-gray-200 md:top-0 md:bottom-auto md:w-64 md:h-full md:border-r md:border-t-0 flex md:flex-col justify-around md:justify-start md:items-stretch md:p-6 shadow-sm md:shadow-none">
-        <div className="hidden md:block mb-10 px-2">
-          <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-            <span className="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center text-white text-lg">P</span>
-            Prolow5
-          </h1>
+      <aside className="fixed left-0 top-0 h-screen w-64 bg-white border-r border-gray-200 z-40 hidden md:flex flex-col">
+        <div className="p-6 border-b border-gray-200">
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-brand-600 to-blue-600 bg-clip-text text-transparent">Prolow5</h1>
+          <p className="text-xs text-gray-500 mt-1">Gestion Ventes & Dépenses</p>
         </div>
 
-        <button onClick={() => setActiveTab('overview')} className={`p-4 md:px-4 md:py-3 rounded-xl flex flex-col md:flex-row items-center gap-2 md:gap-4 transition-all ${activeTab === 'overview' ? 'text-brand-600 bg-brand-50 font-medium' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}>
-          <WalletIcon />
-          <span className="text-xs md:text-sm">Tableau de bord</span>
-        </button>
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
+          {/* ... nav items ... */}
+          <button
+            onClick={() => setActiveTab('overview')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'overview' ? 'bg-brand-50 text-brand-700 font-medium shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}
+          >
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${activeTab === 'overview' ? 'bg-brand-200 text-brand-700' : 'bg-gray-100 text-gray-500'}`}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 256 256"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"></path></svg>
+            </div>
+            <span>Vue d'ensemble</span>
+          </button>
 
-        <button onClick={() => setActiveTab('sales')} className={`p-4 md:px-4 md:py-3 rounded-xl flex flex-col md:flex-row items-center gap-2 md:gap-4 transition-all ${activeTab === 'sales' ? 'text-green-600 bg-green-50 font-medium' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}>
-          <TrendUpIcon />
-          <span className="text-xs md:text-sm">Ventes</span>
-        </button>
+          <button
+            onClick={() => setActiveTab('sales')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'sales' ? 'bg-green-50 text-green-700 font-medium shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}
+          >
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${activeTab === 'sales' ? 'bg-green-200 text-green-700' : 'bg-gray-100 text-gray-500'}`}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 256 256"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"></path></svg>
+            </div>
+            <span>Ventes</span>
+          </button>
 
-        <button onClick={() => setActiveTab('expenses')} className={`p-4 md:px-4 md:py-3 rounded-xl flex flex-col md:flex-row items-center gap-2 md:gap-4 transition-all ${activeTab === 'expenses' ? 'text-red-600 bg-red-50 font-medium' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50'}`}>
-          <TrendDownIcon />
-          <span className="text-xs md:text-sm">Dépenses</span>
-        </button>
+          <button
+            onClick={() => setActiveTab('expenses')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'expenses' ? 'bg-red-50 text-red-700 font-medium shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}
+          >
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${activeTab === 'expenses' ? 'bg-red-200 text-red-700' : 'bg-gray-100 text-gray-500'}`}>
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 256 256"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"></path></svg>
+            </div>
+            <span>Dépenses</span>
+          </button>
+        </nav>
 
-        <div className="hidden md:flex flex-grow items-end">
-          <button onClick={handleSignOut} className="w-full flex items-center gap-3 px-4 py-3 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all">
-            <SignOutIcon />
-            <span className="text-sm font-medium">Déconnexion</span>
+        <div className="p-4 border-t border-gray-200">
+          <div className="flex items-center gap-3 mb-4 px-2">
+            <div className="w-10 h-10 rounded-full bg-brand-100 flex items-center justify-center text-brand-700 font-bold">
+              {(userProfile?.username || currentUserEmail || 'U').charAt(0).toUpperCase()}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900 truncate">
+                {userProfile?.username || currentUserEmail?.split('@')[0]}
+              </p>
+              <p className="text-xs text-gray-500 truncate">{currentUserEmail}</p>
+            </div>
+          </div>
+          <button
+            onClick={handleSignOut}
+            className="w-full flex items-center gap-2 justify-center px-4 py-2 text-sm text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors font-medium"
+          >
+            <SignOutIcon /> Déconnexion
           </button>
         </div>
-      </nav>
+      </aside>
 
       {/* Main Content */}
       <main className="md:ml-64 p-4 md:p-8 max-w-7xl mx-auto">
