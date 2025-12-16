@@ -18,18 +18,24 @@ export const getProducts = async (): Promise<Product[]> => {
 export const saveProduct = async (product: Partial<Product>): Promise<Product> => {
     const { id, ...rest } = product;
 
+    // Ensure user_id is present for new items
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error("Utilisateur non connecté");
+
+    const payload = { ...rest, user_id: user.id };
+
     let query;
     if (id) {
         query = supabase
             .from('products')
-            .update(rest) // Update fields, don't update ID
+            .update(rest) // Update: No need to update user_id usually, but rest is fine
             .eq('id', id)
             .select()
             .single();
     } else {
         query = supabase
             .from('products')
-            .insert(rest) // Insert creates new ID
+            .insert(payload) // Insert: Must include user_id
             .select()
             .single();
     }

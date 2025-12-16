@@ -288,6 +288,32 @@ export const Dashboard: React.FC = () => {
     setEditingExpenseId(null);
   };
 
+  const TrashIcon = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 256 256"><path d="M216,48H176V40a24,24,0,0,0-24-24H104A24,24,0,0,0,80,40v8H40a8,8,0,0,0,0,16h8V208a16,16,0,0,0,16,16H192a16,16,0,0,0,16-16V64h8a8,8,0,0,0,0-16ZM96,40a8,8,0,0,1,8-8h48a8,8,0,0,1,8,8v8H96Zm96,168H64V64H192ZM112,104v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Zm48,0v64a8,8,0,0,1-16,0V104a8,8,0,0,1,16,0Z"></path></svg>
+  );
+
+  const handleDeleteSale = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation(); // Prevent row click (edit)
+    if (!confirm("Voulez-vous vraiment supprimer cette vente ?")) return;
+    try {
+      await deleteSale(id);
+      await fetchData();
+    } catch (err: any) {
+      alert("Erreur: " + getSafeErrorMessage(err));
+    }
+  };
+
+  const handleDeleteExpense = async (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    if (!confirm("Voulez-vous vraiment supprimer cette dépense ?")) return;
+    try {
+      await deleteExpense(id);
+      await fetchData();
+    } catch (err: any) {
+      alert("Erreur: " + getSafeErrorMessage(err));
+    }
+  };
+
   const KPI = ({ title, value, color, icon: Icon, subValue }: any) => (
     <Card className="relative overflow-hidden group hover:border-brand-500/30 transition-all">
       <div className="flex justify-between items-start">
@@ -630,9 +656,18 @@ export const Dashboard: React.FC = () => {
 
                 <div className="md:col-span-2 mt-4 flex gap-4">
                   {editingSaleId && (
-                    <button type="button" onClick={cancelEditSale} className="w-1/3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 rounded-xl transition-all">
-                      Annuler
-                    </button>
+                    <>
+                      <button
+                        type="button"
+                        onClick={(e) => handleDeleteSale(e, editingSaleId)}
+                        className="w-1/4 bg-red-100 hover:bg-red-200 text-red-700 font-bold py-3 rounded-xl transition-all"
+                      >
+                        <TrashIcon />
+                      </button>
+                      <button type="button" onClick={cancelEditSale} className="w-1/3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 rounded-xl transition-all">
+                        Annuler
+                      </button>
+                    </>
                   )}
                   <button type="submit" disabled={formLoading} className="flex-1 bg-brand-600 hover:bg-brand-500 text-white font-bold py-3 rounded-xl transition-all disabled:opacity-50 shadow-md shadow-brand-500/20">
                     {formLoading ? 'Enregistrement...' : (editingSaleId ? 'Mettre à jour' : 'Enregistrer la Vente')}
@@ -690,9 +725,18 @@ export const Dashboard: React.FC = () => {
 
                 <div className="md:col-span-2 mt-4 flex gap-4">
                   {editingExpenseId && (
-                    <button type="button" onClick={cancelEditExpense} className="w-1/3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 rounded-xl transition-all">
-                      Annuler
-                    </button>
+                    <>
+                      <button
+                        type="button"
+                        onClick={(e) => handleDeleteExpense(e, editingExpenseId)}
+                        className="w-1/4 bg-red-100 hover:bg-red-200 text-red-700 font-bold py-3 rounded-xl transition-all"
+                      >
+                        <TrashIcon />
+                      </button>
+                      <button type="button" onClick={cancelEditExpense} className="w-1/3 bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 rounded-xl transition-all">
+                        Annuler
+                      </button>
+                    </>
                   )}
                   <button type="submit" disabled={formLoading} className="flex-1 bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-xl transition-all disabled:opacity-50 shadow-md shadow-red-500/20">
                     {formLoading ? 'Enregistrement...' : (editingExpenseId ? 'Mettre à jour' : 'Enregistrer la Dépense')}
