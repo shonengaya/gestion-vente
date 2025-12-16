@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../services/supabase';
-import { getDashboardStats, addSale, addExpense, getSales, getExpenses, updateSale, updateExpense, deleteSale, deleteExpense } from '../services/api';
-import { DashboardStats, MonthlyData, Sale, Expense, PaymentMethod } from '../types';
+import { getDashboardStats, addSale, addExpense, getSales, getExpenses, updateSale, updateExpense, deleteSale, deleteExpense, getUserProfile } from '../services/api';
+import { DashboardStats, MonthlyData, Sale, Expense, PaymentMethod, Profile } from '../types';
 import { formatAriary, PAYMENT_METHODS } from '../constants';
 import { Card } from './ui/Card';
 import { Input, Select } from './ui/Input';
 import { InstallPWA } from './InstallPWA';
+import { AdminDashboard } from './AdminDashboard';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   AreaChart, Area
@@ -64,6 +65,12 @@ const getSafeErrorMessage = (err: any) => {
   }
 };
 
+const LockIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" viewBox="0 0 256 256"><path d="M208,80H176V56a48,48,0,0,0-96,0V80H48A16,16,0,0,0,32,96V208a16,16,0,0,0,16,16H208a16,16,0,0,0,16-16V96A16,16,0,0,0,208,80Zm-80,84a12,12,0,1,1,12-12A12,12,0,0,1,128,164Zm40-84H88V56a40,40,0,0,1,80,0Z"></path></svg>
+);
+
+const ADMIN_EMAIL = 'andriantahirynomena@gmail.com';
+
 export const Dashboard: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [chartData, setChartData] = useState<MonthlyData[]>([]);
@@ -71,6 +78,11 @@ export const Dashboard: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'sales' | 'expenses'>('overview');
   const [salesHistory, setSalesHistory] = useState<Sale[]>([]);
   const [expensesHistory, setExpensesHistory] = useState<Expense[]>([]);
+
+  const [userProfile, setUserProfile] = useState<Profile | null>(null);
+  const [isExpired, setIsExpired] = useState(false);
+  const [isDeactivated, setIsDeactivated] = useState(false);
+  const [currentUserEmail, setCurrentUserEmail] = useState<string | null>(null);
 
   // Form States & Editing
   const [newSale, setNewSale] = useState({ customer_name: '', service_name: '', amount: '', date: new Date().toISOString().split('T')[0], payment_method: 'Orange Money' });
@@ -83,6 +95,31 @@ export const Dashboard: React.FC = () => {
 
   const fetchData = async () => {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      setCurrentUserEmail(user.email || null);
+
+      // Fetch Profile
+      const profile = await getUserProfile(user.id);
+      setUserProfile(profile);
+
+      // Check Expiry or Inactive (skip for admin)
+      if (profile && user.email !== ADMIN_EMAIL) {
+        // Check Deactivation first
+        if (profile.is_active === false) {
+          setIsDeactivated(true);
+          setLoading(false);
+          return;
+        }
+
+        const expiry = new Date(profile.subscription_expires_at);
+        if (new Date() > expiry) {
+          setIsExpired(true);
+          setLoading(false);
+          return; // Stop fetching data if expired
+        }
+      }
+
       const { stats, chartData } = await getDashboardStats();
       const sHist = await getSales();
       const eHist = await getExpenses();
@@ -104,6 +141,58 @@ export const Dashboard: React.FC = () => {
   const handleSignOut = async () => {
     await supabase.auth.signOut();
   };
+
+  if (loading) return <div className="min-h-screen flex items-center justify-center text-brand-500 font-medium">Chargement des données...</div>;
+
+  // 1. ADMIN VIEW
+  const isAdmin = currentUserEmail?.trim().toLowerCase() === ADMIN_EMAIL.trim().toLowerCase();
+
+
+
+  if (isAdmin) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <nav className="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center sticky top-0 z-50">
+          <h1 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <span className="w-8 h-8 bg-brand-500 rounded-lg flex items-center justify-center text-white text-lg">A</span>
+            Admin Panel
+          </h1>
+          <button onClick={handleSignOut} className="text-gray-500 hover:text-red-600 font-medium text-sm">
+            Déconnexion
+          </button>
+        </nav>
+        <AdminDashboard />
+      </div>
+    );
+  }
+
+  // 2. EXPIRED OR DEACTIVATED VIEW
+  if (isExpired || isDeactivated) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+        <Card className="text-center max-w-md w-full py-12">
+          <div className="flex justify-center mb-6 text-red-500">
+            <LockIcon />
+          </div>
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            {isDeactivated ? "Compte Désactivé" : "Période d'essai terminée"}
+          </h1>
+          <p className="text-gray-500 mb-8">
+            {isDeactivated
+              ? "Votre compte a été désactivé par l'administrateur. Veuillez nous contacter pour plus d'informations."
+              : "Votre accès de 3 jours a expiré. Veuillez contacter l'administrateur pour souscrire un abonnement et débloquer votre compte."
+            }
+          </p>
+          <div className="bg-gray-100 p-4 rounded-xl mb-6 text-sm text-gray-700">
+            Contact: <span className="font-bold">034 96 712 22</span>
+          </div>
+          <button onClick={handleSignOut} className="text-brand-600 font-medium hover:underline">
+            Se déconnecter
+          </button>
+        </Card>
+      </div>
+    );
+  }
 
   const submitSale = async (e: React.FormEvent) => {
     e.preventDefault();

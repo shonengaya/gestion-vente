@@ -46,3 +46,11 @@ export interface MonthlyData {
   expenses: number;
   net: number;
 }
+
+export interface Profile {
+  id: string;
+  email: string;
+  subscription_expires_at: string;
+  role: string;
+  is_active?: boolean;
+}

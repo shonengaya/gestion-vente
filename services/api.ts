@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import { Sale, Expense, DashboardStats, MonthlyData } from '../types';
+import { Sale, Expense, DashboardStats, MonthlyData, Profile } from '../types';
 
 // --- Sales Operations ---
 
@@ -193,4 +193,61 @@ export const getDashboardStats = async (): Promise<{ stats: DashboardStats, char
   }
 
   return { stats, chartData };
+};
+
+
+// --- Admin & Subscription Operations ---
+
+export const getUserProfile = async (userId: string): Promise<Profile | null> => {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('id', userId)
+    .single();
+
+  if (error) {
+    // If no row found, it's not a critical error, just no profile yet.
+    if (error.code === 'PGRST116') {
+      return null;
+    }
+    console.error("Error fetching profile:", error.message, error.details, error.hint);
+    return null;
+  }
+  return data;
+};
+
+export const getAllProfiles = async (): Promise<Profile[]> => {
+  // Use the secure RPC function
+  const { data, error } = await supabase
+    .rpc('get_all_profiles_admin');
+
+  if (error) {
+    console.error("Admin Fetch Error:", error);
+    throw error;
+  }
+  return data || [];
+};
+
+export const extendSubscription = async (userId: string, monthsToAdd: number) => {
+  // Use the secure RPC function
+  const { data, error } = await supabase
+    .rpc('extend_subscription_admin', {
+      target_user_id: userId,
+      months_to_add: monthsToAdd
+    });
+
+  if (error) throw error;
+  return data;
+};
+
+export const toggleUserStatus = async (userId: string, isActive: boolean) => {
+  const { data, error } = await supabase
+    .rpc('toggle_user_active_status_admin', {
+      target_user_id: userId,
+      new_status: isActive
+    });
+
+  if (error) throw error;
+  // returns setof, so data is an array
+  return data && data.length > 0 ? data[0] : null;
 };
