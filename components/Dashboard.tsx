@@ -7,6 +7,8 @@ import { Card } from './ui/Card';
 import { Input, Select } from './ui/Input';
 import { InstallPWA } from './InstallPWA';
 import { AdminDashboard } from './AdminDashboard';
+import { ProductList } from './products/ProductList';
+import { ProductSelector } from './products/ProductSelector';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   AreaChart, Area
@@ -29,6 +31,10 @@ const SignOutIcon = () => (
 
 const PencilIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 256 256"><path d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM51.31,160l90.35-90.35,16.68,16.69L68,176.68ZM48,179.31,76.69,208H48Zm48,25.38L79.31,188.69,202.63,65.37l16.68,16.69Z"></path></svg>
+);
+
+const PackageIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 256 256"><path d="M223.68,66.15,135.68,18a15.88,15.88,0,0,0-15.36,0l-88,48.15a16,16,0,0,0-8.32,14v95.7a16,16,0,0,0,8.32,14l88,48.15a15.88,15.88,0,0,0,15.36,0l88-48.15a16,16,0,0,0,8.32-14V80.15A16,16,0,0,0,223.68,66.15ZM128,32l80,43.75-34.25,18.74L93.75,50.74Zm-80,43.75,80,43.75V224L48,180.25Zm88,148.25V119.5l80-43.75L216,180.25Z"></path></svg>
 );
 
 // Custom Tooltip for Recharts
@@ -75,7 +81,7 @@ export const Dashboard: React.FC = () => {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [chartData, setChartData] = useState<MonthlyData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<'overview' | 'sales' | 'expenses'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'sales' | 'expenses' | 'products'>('overview');
   const [salesHistory, setSalesHistory] = useState<Sale[]>([]);
   const [expensesHistory, setExpensesHistory] = useState<Expense[]>([]);
 
@@ -301,6 +307,49 @@ export const Dashboard: React.FC = () => {
 
   return (
     <div className="min-h-screen pb-20 md:pb-8 bg-gray-50">
+      {/* Mobile Navigation */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50 flex justify-around items-center p-3 pb-safe shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+        <button
+          onClick={() => setActiveTab('overview')}
+          className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${activeTab === 'overview' ? 'text-brand-600' : 'text-gray-400 hover:text-gray-600'}`}
+        >
+          <div className={`p-1.5 rounded-lg ${activeTab === 'overview' ? 'bg-brand-50' : 'bg-transparent'}`}>
+            <WalletIcon />
+          </div>
+          <span className="text-[10px] font-medium">Accueil</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('products')}
+          className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${activeTab === 'products' ? 'text-blue-600' : 'text-gray-400 hover:text-gray-600'}`}
+        >
+          <div className={`p-1.5 rounded-lg ${activeTab === 'products' ? 'bg-blue-50' : 'bg-transparent'}`}>
+            <PackageIcon />
+          </div>
+          <span className="text-[10px] font-medium">Produits</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('sales')}
+          className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${activeTab === 'sales' ? 'text-green-600' : 'text-gray-400 hover:text-gray-600'}`}
+        >
+          <div className={`p-1.5 rounded-lg ${activeTab === 'sales' ? 'bg-green-50' : 'bg-transparent'}`}>
+            <TrendUpIcon />
+          </div>
+          <span className="text-[10px] font-medium">Ventes</span>
+        </button>
+
+        <button
+          onClick={() => setActiveTab('expenses')}
+          className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${activeTab === 'expenses' ? 'text-red-600' : 'text-gray-400 hover:text-gray-600'}`}
+        >
+          <div className={`p-1.5 rounded-lg ${activeTab === 'expenses' ? 'bg-red-50' : 'bg-transparent'}`}>
+            <TrendDownIcon />
+          </div>
+          <span className="text-[10px] font-medium">Dépenses</span>
+        </button>
+      </nav>
+
       {/* Sidebar / Navbar */}
       <aside className="fixed left-0 top-0 h-screen w-64 bg-white border-r border-gray-200 z-40 hidden md:flex flex-col">
         <div className="p-6 border-b border-gray-200">
@@ -328,6 +377,16 @@ export const Dashboard: React.FC = () => {
               <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" viewBox="0 0 256 256"><path d="M224,128a8,8,0,0,1-8,8H40a8,8,0,0,1,0-16H216A8,8,0,0,1,224,128ZM40,72H216a8,8,0,0,0,0-16H40a8,8,0,0,0,0,16ZM216,184H40a8,8,0,0,0,0,16H216a8,8,0,0,0,0-16Z"></path></svg>
             </div>
             <span>Ventes</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab('products')}
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${activeTab === 'products' ? 'bg-blue-50 text-blue-700 font-medium shadow-sm' : 'text-gray-600 hover:bg-gray-50'}`}
+          >
+            <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${activeTab === 'products' ? 'bg-blue-200 text-blue-700' : 'bg-gray-100 text-gray-500'}`}>
+              <PackageIcon />
+            </div>
+            <span>Produits</span>
           </button>
 
           <button
@@ -553,6 +612,15 @@ export const Dashboard: React.FC = () => {
         {activeTab === 'sales' && (
           <div className="space-y-6 animate-fade-in">
             <Card title={editingSaleId ? "Modifier la Vente" : "Nouvelle Vente"}>
+              {!editingSaleId && (
+                <ProductSelector
+                  onSelect={(p) => setNewSale({
+                    ...newSale,
+                    service_name: p.name,
+                    amount: String(p.price)
+                  })}
+                />
+              )}
               <form onSubmit={submitSale} className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <Input label="Nom du Client" value={newSale.customer_name} onChange={e => setNewSale({ ...newSale, customer_name: e.target.value })} required placeholder="Ex: Jean Rakoto" />
                 <Input label="Service / Produit" value={newSale.service_name} onChange={e => setNewSale({ ...newSale, service_name: e.target.value })} required placeholder="Ex: Réparation PC" />
@@ -662,6 +730,10 @@ export const Dashboard: React.FC = () => {
               </div>
             </Card>
           </div>
+        )}
+
+        {activeTab === 'products' && (
+          <ProductList />
         )}
       </main>
       <InstallPWA />

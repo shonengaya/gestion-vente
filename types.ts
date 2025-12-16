@@ -55,3 +55,13 @@ export interface Profile {
   is_active?: boolean;
   username?: string;
 }
+
+export interface Product {
+  id: string;
+  user_id: string;
+  name: string;
+  type: 'ART' | 'SRV';
+  price: number;
+  stock: number;
+  created_at?: string;
+}
