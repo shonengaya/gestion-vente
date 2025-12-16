@@ -5,6 +5,7 @@ import { DashboardStats, MonthlyData, Sale, Expense, PaymentMethod } from '../ty
 import { formatAriary, PAYMENT_METHODS } from '../constants';
 import { Card } from './ui/Card';
 import { Input, Select } from './ui/Input';
+import { InstallPWA } from './InstallPWA';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   AreaChart, Area
@@ -545,6 +546,7 @@ export const Dashboard: React.FC = () => {
           </div>
         )}
       </main>
+      <InstallPWA />
     </div>
   );
 };
