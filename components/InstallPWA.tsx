@@ -11,17 +11,39 @@ export const InstallPWA = () => {
             setPromptInstall(e);
         };
 
+        // Check if already in standalone mode
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            setSupportsPWA(false);
+        }
+
         window.addEventListener('beforeinstallprompt', handler);
 
-        return () => window.removeEventListener('beforeinstallprompt', handler);
+        const appInstalledHandler = () => {
+            setSupportsPWA(false);
+            setPromptInstall(null);
+            console.log("PWA Installed");
+        };
+
+        window.addEventListener('appinstalled', appInstalledHandler);
+
+        return () => {
+            window.removeEventListener('beforeinstallprompt', handler);
+            window.removeEventListener('appinstalled', appInstalledHandler);
+        };
     }, []);
 
-    const onClick = (evt: React.MouseEvent) => {
+    const onClick = async (evt: React.MouseEvent) => {
         evt.preventDefault();
         if (!promptInstall) {
             return;
         }
         promptInstall.prompt();
+
+        // Wait for usage choice
+        const { outcome } = await promptInstall.userChoice;
+        if (outcome === 'accepted') {
+            setSupportsPWA(false);
+        }
     };
 
     if (!supportsPWA) {
