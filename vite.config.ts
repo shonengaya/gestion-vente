@@ -19,19 +19,24 @@ export default defineConfig(({ mode }) => {
           name: 'Prolow5',
           short_name: 'Prolow5',
           description: 'Gestion financière moderne en Ariary',
-          theme_color: '#ffffff',
+          theme_color: '#10b981', // Emerald-500
+          background_color: '#ffffff',
           display: 'standalone',
+          orientation: 'portrait',
           start_url: '/',
+          scope: '/',
           icons: [
             {
-              src: 'https://picsum.photos/192', // Placeholder for now
+              src: 'https://ui-avatars.com/api/?name=P5&background=10b981&color=fff&size=192&rounded=true&bold=true',
               sizes: '192x192',
-              type: 'image/png'
+              type: 'image/png',
+              purpose: 'any maskable'
             },
             {
-              src: 'https://picsum.photos/512', // Placeholder for now
+              src: 'https://ui-avatars.com/api/?name=P5&background=10b981&color=fff&size=512&rounded=true&bold=true',
               sizes: '512x512',
-              type: 'image/png'
+              type: 'image/png',
+              purpose: 'any maskable'
             }
           ]
         },
