@@ -87,6 +87,52 @@
 
 <body>
   <div id="root"></div>
+
+  <!-- Auto-cleanup old Service Workers and caches -->
+  <script>
+      (async function () {
+        const CLEANUP_VERSION = 'sw_cleaned_v3';
+
+        // One-time full cleanup to fix PWA installation
+        if (!localStorage.getItem(CLEANUP_VERSION)) {
+          console.log('Performing one-time PWA cleanup...');
+
+          // Unregister ALL service workers
+          if ('serviceWorker' in navigator) {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            for (const registration of registrations) {
+              await registration.unregister();
+              console.log('Unregistered SW:', registration.scope);
+            }
+          }
+
+          // Clear ALL caches
+          if ('caches' in window) {
+            const cacheNames = await caches.keys();
+            for (const cacheName of cacheNames) {
+              await caches.delete(cacheName);
+              console.log('Deleted cache:', cacheName);
+            }
+          }
+
+          // Mark as cleaned
+          localStorage.setItem(CLEANUP_VERSION, Date.now().toString());
+
+          // Reload to get fresh SW
+          console.log('Cleanup complete. Reloading...');
+          window.location.reload();
+        } else {
+          // Normal operation: just update existing SWs
+          if ('serviceWorker' in navigator) {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            for (const registration of registrations) {
+              registration.update();
+            }
+          }
+        }
+      })();
+  </script>
+
   <script type="module" src="/index.tsx"></script>
 </body>
 
