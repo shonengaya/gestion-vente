@@ -6,11 +6,18 @@ export const InstallPWA = () => {
     const [promptInstall, setPromptInstall] = useState<any>(null);
     const [isIOS, setIsIOS] = useState(false);
     const [showInstructions, setShowInstructions] = useState(false);
+    const [showButton, setShowButton] = useState(false);
 
     useEffect(() => {
         // Detect iOS
         const userAgent = window.navigator.userAgent.toLowerCase();
-        setIsIOS(/iphone|ipad|ipod/.test(userAgent));
+        const isIOSDevice = /iphone|ipad|ipod/.test(userAgent);
+        setIsIOS(isIOSDevice);
+
+        // Always show on iOS (manual install only)
+        if (isIOSDevice) {
+            setShowButton(true);
+        }
 
         const handler = (e: any) => {
             e.preventDefault();
@@ -18,16 +25,22 @@ export const InstallPWA = () => {
             if (!window.matchMedia('(display-mode: standalone)').matches) {
                 setSupportsPWA(true);
                 setPromptInstall(e);
+                setShowButton(true); // Ready to install!
             }
         };
+
+        // Fallback: If no event fires after 10s, show button anyway (maybe manual needed)
+        const timer = setTimeout(() => {
+            if (!window.matchMedia('(display-mode: standalone)').matches) {
+                setSupportsPWA(true);
+                setShowButton(true);
+            }
+        }, 10000);
 
         // Check if already in standalone mode
         if (window.matchMedia('(display-mode: standalone)').matches) {
             setSupportsPWA(false);
-        } else {
-            // If not standalone, we might want to show instructions even if prompt didn't fire (e.g. dismissed previously or iOS)
-            // However, strictly showing valid 'Install' button depends on event for Android.
-            // For iOS we always show instruction button if we want.
+            setShowButton(false);
         }
 
         window.addEventListener('beforeinstallprompt', handler);
@@ -36,12 +49,14 @@ export const InstallPWA = () => {
             setSupportsPWA(false);
             setPromptInstall(null);
             setShowInstructions(false);
+            setShowButton(false);
             console.log("PWA Installed");
         };
 
         window.addEventListener('appinstalled', appInstalledHandler);
 
         return () => {
+            clearTimeout(timer);
             window.removeEventListener('beforeinstallprompt', handler);
             window.removeEventListener('appinstalled', appInstalledHandler);
         };
@@ -65,6 +80,8 @@ export const InstallPWA = () => {
     if (typeof window !== 'undefined' && window.matchMedia('(display-mode: standalone)').matches) {
         return null;
     }
+
+    if (!showButton) return null;
 
     return (
         <>
