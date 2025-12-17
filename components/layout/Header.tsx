@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CalendarIcon, ChevronDownIcon, SignOutIcon } from '../ui/Icons';
 import DatePicker from 'react-datepicker';
 import "react-datepicker/dist/react-datepicker.css";
@@ -44,6 +44,35 @@ export const Header: React.FC<HeaderProps> = ({ timeFilter, setTimeFilter, dateR
         if (diffDays <= 7) return 'text-orange-500';
         if (diffDays < 0) return 'text-red-500';
         return 'text-emerald-600';
+    };
+
+    const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+
+    useEffect(() => {
+        // Check if event already fired
+        if ((window as any).deferredPrompt) {
+            setDeferredPrompt((window as any).deferredPrompt);
+        }
+
+        const handler = (e: any) => {
+            e.preventDefault();
+            setDeferredPrompt(e);
+            (window as any).deferredPrompt = e;
+        };
+        window.addEventListener('beforeinstallprompt', handler);
+        return () => window.removeEventListener('beforeinstallprompt', handler);
+    }, []);
+
+    const handleInstallClick = async () => {
+        if (!deferredPrompt) {
+            alert("Pour installer l'application :\n1. Sur Android (Chrome) : Cliquez sur le menu (3 points) > 'Installer l'application'\n2. Sur iOS (Safari) : Cliquez sur Partager > 'Sur l'écran d'accueil'\n3. Sur PC (Chrome) : Cliquez sur l'icône dans la barre d'adresse");
+            return;
+        }
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+            setDeferredPrompt(null);
+        }
     };
 
     return (
@@ -215,6 +244,18 @@ export const Header: React.FC<HeaderProps> = ({ timeFilter, setTimeFilter, dateR
                                     </div>
                                 )}
                             </div>
+
+
+                            <button
+                                onClick={handleInstallClick}
+                                className="w-full flex items-center justify-center gap-2 bg-blue-50 text-blue-600 font-bold py-2.5 rounded-xl hover:bg-blue-100 transition-colors mb-2"
+                            >
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                </svg>
+                                Installer l'app
+                            </button>
+
 
                             <button
                                 onClick={handleSignOut}

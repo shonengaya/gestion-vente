@@ -15,11 +15,15 @@ export default defineConfig(({ mode }) => {
       VitePWA({
         registerType: 'autoUpdate',
         devOptions: {
-          enabled: true
+          enabled: true,
+          type: 'module', // Important for ESM projects
+          navigateFallback: 'index.html',
         },
         includeAssets: ['logo.svg', 'icons/*.png'],
         manifest: {
           name: 'Prolow5 - Gestion Ventes',
+          start_url: '/',
+          scope: '/',
           short_name: 'Prolow5',
           description: 'Gestion financière moderne en Ariary',
           theme_color: '#ffffff',
