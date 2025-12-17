@@ -69,7 +69,7 @@ export const ProductList: React.FC = () => {
                 <h2 className="text-xl font-bold text-gray-800">Mes Produits & Services</h2>
                 <button
                     onClick={() => { setEditingProduct(undefined); setIsModalOpen(true); }}
-                    className="flex items-center gap-2 bg-brand-600 text-white px-4 py-2 rounded-lg hover:bg-brand-700 transition-colors shadow-sm"
+                    className="flex items-center gap-2 bg-slate-900 text-white px-4 py-2 rounded-xl hover:bg-slate-800 transition-colors shadow-lg shadow-slate-900/20 font-medium"
                 >
                     <PlusIcon />
                     <span className="hidden sm:inline">Nouveau Produit</span>
@@ -87,7 +87,7 @@ export const ProductList: React.FC = () => {
                                 </span>
                             </div>
                             <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <button onClick={() => handleEdit(product)} className="p-1.5 text-gray-500 hover:bg-gray-100 rounded-full hover:text-brand-600">
+                                <button onClick={() => handleEdit(product)} className="p-1.5 text-gray-500 hover:bg-gray-100 rounded-lg hover:text-blue-600 transition-colors">
                                     <EditIcon />
                                 </button>
                                 <button onClick={() => handleDelete(product.id)} className="p-1.5 text-gray-500 hover:bg-gray-100 rounded-full hover:text-red-600">
@@ -99,7 +99,7 @@ export const ProductList: React.FC = () => {
                         <div className="flex justify-between items-end mt-4">
                             <div>
                                 <p className="text-xs text-gray-500">Prix unitaire</p>
-                                <p className="text-lg font-bold text-brand-600">{formatAriary(product.price)}</p>
+                                <p className="text-lg font-bold text-emerald-600">{formatAriary(product.price)}</p>
                             </div>
                             {product.type === 'ART' && (
                                 <div className="text-right">

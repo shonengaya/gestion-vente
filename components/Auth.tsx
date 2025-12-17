@@ -71,18 +71,19 @@ export const Auth: React.FC = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50 relative overflow-hidden">
-      <div className="absolute top-[-20%] right-[-10%] w-[500px] h-[500px] bg-brand-200/40 rounded-full blur-[120px]" />
-      <div className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] bg-blue-200/40 rounded-full blur-[120px]" />
+      <div className="absolute top-[-20%] right-[-10%] w-[500px] h-[500px] bg-blue-200/40 rounded-full blur-[120px]" />
+      <div className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] bg-slate-200/40 rounded-full blur-[120px]" />
 
-      <Card className="w-full max-w-md relative z-10 shadow-2xl shadow-brand-500/10">
-        <div className="text-center mb-8">
-          <div className="w-12 h-12 bg-brand-500 rounded-xl flex items-center justify-center text-white text-2xl font-bold mx-auto mb-4 shadow-lg shadow-brand-500/30">
-            P
+      <Card className="w-full max-w-md relative z-10 shadow-2xl shadow-slate-200 border border-white/50 backdrop-blur-xl">
+        <div className="text-center mb-10 flex flex-col items-center">
+          <div className="grid grid-cols-2 gap-1.5 w-12 h-12 mb-4">
+            <div className="bg-blue-500 rounded-full w-full h-full"></div>
+            <div className="bg-gray-400 rounded-full w-full h-full"></div>
+            <div className="bg-gray-600 rounded-full w-full h-full"></div>
+            <div className="bg-gray-800 rounded-full w-full h-full"></div>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900">
-            Prolow5
-          </h1>
-          <p className="text-gray-500 mt-2">Votre excellence financière</p>
+          <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Prolow5</h1>
+          <p className="text-gray-500 mt-2 font-medium">Votre excellence financière</p>
         </div>
 
         <form onSubmit={handleAuth}>
@@ -135,7 +136,7 @@ export const Auth: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-brand-600 hover:bg-brand-700 text-white font-semibold py-3 px-6 rounded-xl shadow-lg shadow-brand-500/20 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 px-6 rounded-xl shadow-xl shadow-slate-900/20 transition-all transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? 'Chargement...' : (isLogin ? 'Se connecter' : 'S\'inscrire')}
           </button>
@@ -146,7 +147,7 @@ export const Auth: React.FC = () => {
             {isLogin ? "Pas encore de compte ?" : "Déjà un compte ?"}
             <button
               onClick={() => setIsLogin(!isLogin)}
-              className="ml-2 text-brand-600 hover:text-brand-700 font-semibold hover:underline"
+              className="ml-2 text-blue-600 hover:text-blue-700 font-bold hover:underline transition-colors"
             >
               {isLogin ? 'Créer un compte' : 'Se connecter'}
             </button>

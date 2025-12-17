@@ -585,7 +585,10 @@ export const Dashboard: React.FC = () => {
               <div className="bg-gray-600 rounded-full w-full h-full"></div>
               <div className="bg-gray-800 rounded-full w-full h-full"></div>
             </div>
-            <h1 className="text-xl font-bold tracking-tight">Prolow5</h1>
+            <div className="flex flex-col">
+              <h1 className="text-xl font-bold tracking-tight leading-none">Prolow5</h1>
+              <span className="text-[10px] text-gray-500 font-medium mt-1 leading-none">Gestion de ventes et de budget</span>
+            </div>
           </div>
         </div>
 
@@ -661,13 +664,16 @@ export const Dashboard: React.FC = () => {
           <div className="flex items-center gap-4 flex-1">
             {/* Mobile Logo */}
             <div className="md:hidden flex items-center gap-2">
-              <div className="grid grid-cols-2 gap-1 w-5 h-5">
+              <div className="grid grid-cols-2 gap-1 w-5 h-5 flex-shrink-0">
                 <div className="bg-blue-500 rounded-full w-full h-full"></div>
                 <div className="bg-gray-400 rounded-full w-full h-full"></div>
                 <div className="bg-gray-600 rounded-full w-full h-full"></div>
                 <div className="bg-gray-800 rounded-full w-full h-full"></div>
               </div>
-              <span className="font-bold text-lg text-slate-800 tracking-tight">Prolow5</span>
+              <div className="flex flex-col">
+                <span className="font-bold text-base text-slate-800 tracking-tight leading-none">Prolow5</span>
+                <span className="text-[9px] text-gray-400 font-medium leading-none mt-0.5">Gestion de ventes et de budget</span>
+              </div>
             </div>
 
             {/* Search Simulation */}
@@ -689,15 +695,30 @@ export const Dashboard: React.FC = () => {
               >
                 <CalendarIcon className="w-4 h-4" />
                 <span className="capitalize hidden sm:inline">
-                  {timeFilter === 'custom' && dateRange.start ?
-                    `${new Date(dateRange.start).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })} - ${dateRange.end ? new Date(dateRange.end).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : '...'}`
-                    : new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
+                  {(() => {
+                    const today = new Date();
+                    if (timeFilter === 'day') return today.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+                    if (timeFilter === 'week') {
+                      const start = new Date(today);
+                      const day = start.getDay() || 7;
+                      start.setDate(today.getDate() - day + 1);
+                      const end = new Date(start);
+                      end.setDate(start.getDate() + 6);
+                      return `${start.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })} - ${end.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}`;
+                    }
+                    if (timeFilter === 'month') return today.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+                    if (timeFilter === 'year') return today.getFullYear().toString();
+                    if (timeFilter === 'custom' && dateRange.start) {
+                      return `${new Date(dateRange.start).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })} - ${dateRange.end ? new Date(dateRange.end).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }) : '...'}`;
+                    }
+                    return today.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+                  })()}
                 </span>
                 <ChevronDownIcon className="w-3 h-3 text-gray-400 hidden sm:block" />
               </button>
 
               {isDatePickerOpen && (
-                <div className="absolute top-full right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-gray-100 p-4 animate-fade-in origin-top-right">
+                <div className="absolute top-full right-0 mt-2 w-auto min-w-[320px] bg-white rounded-2xl shadow-xl border border-gray-100 p-4 animate-fade-in origin-top-right">
                   <div className="flex flex-col gap-2 mb-4">
                     <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Période</label>
                     <div className="grid grid-cols-2 gap-2">
@@ -722,20 +743,32 @@ export const Dashboard: React.FC = () => {
                   {timeFilter === 'custom' && (
                     <div className="flex flex-col gap-2">
                       <label className="text-xs font-bold text-gray-400 uppercase tracking-wider">Sélectionner les dates</label>
-                      <DatePicker
-                        selectsRange={true}
-                        startDate={dateRange.start ? new Date(dateRange.start) : undefined}
-                        endDate={dateRange.end ? new Date(dateRange.end) : undefined}
-                        onChange={(update: any) => {
-                          const [start, end] = update;
-                          setDateRange({
-                            start: start ? start.toLocaleDateString('en-CA') : '',
-                            end: end ? end.toLocaleDateString('en-CA') : ''
-                          });
-                        }}
-                        inline
-                        locale={fr as any}
-                      />
+                      <div className="border border-gray-100 rounded-xl overflow-hidden p-2 flex justify-center bg-gray-50">
+                        <DatePicker
+                          selectsRange={true}
+                          startDate={dateRange.start ? new Date(dateRange.start) : undefined}
+                          endDate={dateRange.end ? new Date(dateRange.end) : undefined}
+                          onChange={(update: any) => {
+                            const [start, end] = update;
+                            setDateRange({
+                              start: start ? start.toLocaleDateString('en-CA') : '',
+                              end: end ? end.toLocaleDateString('en-CA') : ''
+                            });
+                          }}
+                          inline
+                          locale={fr as any}
+                          calendarClassName="!font-sans !border-0 !shadow-none !bg-transparent"
+                        />
+                      </div>
+                      <div className="flex justify-end mt-2">
+                        <button
+                          onClick={() => setIsDatePickerOpen(false)}
+                          disabled={!dateRange.start || !dateRange.end}
+                          className="bg-slate-900 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                        >
+                          Valider
+                        </button>
+                      </div>
                     </div>
                   )}
                 </div>
@@ -824,10 +857,41 @@ export const Dashboard: React.FC = () => {
 
           {activeTab === 'overview' && (
             <div className="space-y-6 animate-fade-in">
-              {/* Time Filter Tabs - Hidden in this design or moved */}
+              {/* Period Title */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-slate-800">
+                    {timeFilter === 'day' ? "Aujourd'hui" :
+                      timeFilter === 'week' ? "Cette semaine" :
+                        timeFilter === 'month' ? "Ce mois" :
+                          timeFilter === 'year' ? "Cette année" :
+                            "Période personnalisée"}
+                  </h2>
+                  <p className="text-sm text-gray-500 font-medium mt-1">
+                    {(() => {
+                      const today = new Date();
+                      if (timeFilter === 'day') return today.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+                      if (timeFilter === 'week') {
+                        const start = new Date(today);
+                        const day = start.getDay() || 7;
+                        start.setDate(today.getDate() - day + 1);
+                        const end = new Date(start);
+                        end.setDate(start.getDate() + 6);
+                        return `Du ${start.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long' })} au ${end.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })}`;
+                      }
+                      if (timeFilter === 'month') return today.toLocaleDateString('fr-FR', { month: 'long', year: 'numeric' });
+                      if (timeFilter === 'year') return today.getFullYear().toString();
+                      if (timeFilter === 'custom' && dateRange.start) {
+                        return `Du ${new Date(dateRange.start).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' })} au ${dateRange.end ? new Date(dateRange.end).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' }) : '...'}`;
+                      }
+                      return '';
+                    })()}
+                  </p>
+                </div>
+              </div>
 
               {/* KPI Cards */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
                 <KPI
                   title="Total Ventes"
                   value={formatAriary(totals.sales).replace('Ar', '')}
@@ -950,7 +1014,7 @@ export const Dashboard: React.FC = () => {
               {/* Recent Activity */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <Card title="Dernières Ventes">
-                  <div className="overflow-x-auto">
+                  <div className="hidden md:block overflow-x-auto">
                     <table className="w-full text-left text-sm text-gray-600">
                       <thead className="text-xs uppercase bg-gray-50 text-gray-500">
                         <tr>
@@ -970,9 +1034,21 @@ export const Dashboard: React.FC = () => {
                       </tbody>
                     </table>
                   </div>
+                  {/* Mobile Card View */}
+                  <div className="md:hidden space-y-3">
+                    {salesHistory.slice(0, 5).map(s => (
+                      <div key={s.id} onClick={() => handleEditSale(s)} className="p-4 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors border border-gray-100 flex flex-col gap-2">
+                        <div className="font-bold text-slate-900">{s.customer_name}</div>
+                        <div className="flex justify-between items-end">
+                          <span className="text-emerald-600 font-bold">{formatAriary(s.amount)}</span>
+                          <span className="text-xs text-gray-500">{new Date(s.date).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </Card>
                 <Card title="Dernières Dépenses">
-                  <div className="overflow-x-auto">
+                  <div className="hidden md:block overflow-x-auto">
                     <table className="w-full text-left text-sm text-gray-600">
                       <thead className="text-xs uppercase bg-gray-50 text-gray-500">
                         <tr>
@@ -991,6 +1067,18 @@ export const Dashboard: React.FC = () => {
                         ))}
                       </tbody>
                     </table>
+                  </div>
+                  {/* Mobile Card View */}
+                  <div className="md:hidden space-y-3">
+                    {expensesHistory.slice(0, 5).map(e => (
+                      <div key={e.id} onClick={() => handleEditExpense(e)} className="p-4 bg-gray-50 rounded-xl cursor-pointer hover:bg-gray-100 transition-colors border border-gray-100 flex flex-col gap-2">
+                        <div className="font-bold text-slate-900">{e.description}</div>
+                        <div className="flex justify-between items-end">
+                          <span className="text-red-600 font-bold">{formatAriary(e.amount)}</span>
+                          <span className="text-xs text-gray-500">{new Date(e.date).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </Card>
               </div>
@@ -1077,7 +1165,7 @@ export const Dashboard: React.FC = () => {
                     </span>
                   </div>
                 }>
-                  <div className="overflow-x-auto max-h-[600px] overflow-y-auto">
+                  <div className="hidden md:block overflow-x-auto max-h-[600px] overflow-y-auto">
                     <table className="w-full text-left text-sm text-gray-600">
                       <thead className="text-xs uppercase bg-gray-50 text-gray-500 sticky top-0 backdrop-blur-md z-10">
                         <tr>
@@ -1116,6 +1204,28 @@ export const Dashboard: React.FC = () => {
                         )}
                       </tbody>
                     </table>
+                  </div>
+                  {/* Mobile Card View for All Sales */}
+                  <div className="md:hidden space-y-3">
+                    {filteredSalesHistory.length === 0 ? (
+                      <div className="text-center text-gray-400 py-8">Aucune vente trouvée.</div>
+                    ) : (
+                      filteredSalesHistory.map(s => (
+                        <div key={s.id} onClick={() => handleEditSale(s)} className="p-4 bg-white rounded-xl cursor-pointer hover:bg-gray-50 transition-colors border border-gray-100 shadow-sm flex flex-col gap-2">
+                          <div className="flex justify-between items-start">
+                            <span className="font-bold text-slate-900">{s.customer_name}</span>
+                            <span className={`px-2 py-0.5 rounded-full text-[10px] border ${s.payment_method.includes('Orange') ? 'border-orange-200 text-orange-700 bg-orange-50' : s.payment_method.includes('Telma') ? 'border-yellow-200 text-yellow-700 bg-yellow-50' : 'border-gray-200 bg-gray-50'}`}>
+                              {s.payment_method}
+                            </span>
+                          </div>
+                          <div className="text-xs text-slate-500">{s.service_name}</div>
+                          <div className="flex justify-between items-end mt-1">
+                            <span className="text-emerald-600 font-bold text-lg">{formatAriary(s.amount)}</span>
+                            <span className="text-xs text-gray-400">{new Date(s.date).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+                      ))
+                    )}
                   </div>
                 </Card>
 
@@ -1263,7 +1373,7 @@ export const Dashboard: React.FC = () => {
                     </span>
                   </div>
                 }>
-                  <div className="overflow-x-auto max-h-[600px] overflow-y-auto">
+                  <div className="hidden md:block overflow-x-auto max-h-[600px] overflow-y-auto">
                     <table className="w-full text-left text-sm text-gray-600">
                       <thead className="text-xs uppercase bg-gray-50 text-gray-500 sticky top-0 backdrop-blur-md">
                         <tr>
@@ -1293,6 +1403,22 @@ export const Dashboard: React.FC = () => {
                           )))}
                       </tbody>
                     </table>
+                  </div>
+                  {/* Mobile Card View for All Expenses */}
+                  <div className="md:hidden space-y-3">
+                    {filteredExpensesHistory.length === 0 ? (
+                      <div className="text-center text-gray-400 py-8">Aucune dépense trouvée.</div>
+                    ) : (
+                      filteredExpensesHistory.map(e => (
+                        <div key={e.id} onClick={() => handleEditExpense(e)} className="p-4 bg-white rounded-xl cursor-pointer hover:bg-gray-50 transition-colors border border-gray-100 shadow-sm flex flex-col gap-2">
+                          <div className="font-bold text-slate-900">{e.description}</div>
+                          <div className="flex justify-between items-end mt-1">
+                            <span className="text-red-600 font-bold text-lg">{formatAriary(e.amount)}</span>
+                            <span className="text-xs text-gray-400">{new Date(e.date).toLocaleDateString()}</span>
+                          </div>
+                        </div>
+                      ))
+                    )}
                   </div>
                 </Card>
               </div>

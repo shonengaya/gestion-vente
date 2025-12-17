@@ -72,7 +72,7 @@ export const ProductForm: React.FC<ProductFormProps> = ({ initialData, onSubmit,
                 </button>
                 <button
                     type="submit"
-                    className="px-4 py-2 bg-brand-600 text-white rounded-lg hover:bg-brand-700 transition-colors disabled:opacity-50"
+                    className="px-4 py-2 bg-slate-900 text-white rounded-lg hover:bg-slate-800 transition-colors disabled:opacity-50 shadow-lg shadow-slate-900/20 font-medium"
                     disabled={isLoading}
                 >
                     {isLoading ? 'Enregistrement...' : 'Enregistrer'}

@@ -7,8 +7,11 @@ export const InstallPWA = () => {
     useEffect(() => {
         const handler = (e: any) => {
             e.preventDefault();
-            setSupportsPWA(true);
-            setPromptInstall(e);
+            // Double check standalone status before enabling
+            if (!window.matchMedia('(display-mode: standalone)').matches) {
+                setSupportsPWA(true);
+                setPromptInstall(e);
+            }
         };
 
         // Check if already in standalone mode
@@ -52,7 +55,7 @@ export const InstallPWA = () => {
 
     return (
         <button
-            className="fixed bottom-20 right-4 md:bottom-4 md:right-4 z-50 bg-brand-600 hover:bg-brand-700 text-white px-4 py-3 rounded-xl shadow-lg shadow-brand-500/30 flex items-center gap-2 animate-bounce hover:animate-none transition-all"
+            className="fixed bottom-24 right-4 md:bottom-6 md:right-6 z-50 bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-3 rounded-xl shadow-lg shadow-emerald-500/30 flex items-center gap-2 animate-bounce hover:animate-none transition-all"
             onClick={onClick}
         >
             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256">
