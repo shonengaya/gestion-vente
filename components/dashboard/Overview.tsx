@@ -79,15 +79,16 @@ export const Overview: React.FC<OverviewProps> = ({
                 </div>
                 <button
                     onClick={onAddFunding}
-                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-xl font-bold shadow-lg shadow-indigo-100 transition-all flex items-center gap-2 hover:scale-105 active:scale-95"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 md:px-4 md:py-2 rounded-xl font-bold shadow-lg shadow-indigo-100 transition-all flex items-center gap-2 hover:scale-105 active:scale-95 text-xs md:text-sm"
                 >
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"></path></svg>
-                    Approvisionner
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 256 256" className="md:w-5 md:h-5"><path d="M224,128a8,8,0,0,1-8,8H136v80a8,8,0,0,1-16,0V136H40a8,8,0,0,1,0-16h80V40a8,8,0,0,1,16,0v80h80A8,8,0,0,1,224,128Z"></path></svg>
+                    <span className="hidden md:inline">Approvisionner</span>
+                    <span className="md:hidden">Add Fonds</span>
                 </button>
             </div>
 
             {/* KPI Cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+            <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-3 md:gap-6 mb-8">
                 <KPI
                     title="Total Ventes"
                     value={formatAriary(totals.sales).replace('Ar', '')}
@@ -121,7 +122,7 @@ export const Overview: React.FC<OverviewProps> = ({
             {/* Charts Row */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Main Chart */}
-                <div className="lg:col-span-2 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <div className="lg:col-span-2 bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-gray-100">
                     <div className="flex justify-between items-center mb-6">
                         <h3 className="font-bold text-gray-800">Évolution Financière</h3>
                         <Select
@@ -158,7 +159,7 @@ export const Overview: React.FC<OverviewProps> = ({
                 </div>
 
                 {/* Pie Chart */}
-                <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 flex flex-col">
+                <div className="bg-white rounded-2xl p-4 md:p-6 shadow-sm border border-gray-100 flex flex-col">
                     <h3 className="font-bold text-gray-800 mb-6">Répartition par Service</h3>
                     <div className="flex-1 min-h-[200px] relative">
                         <ResponsiveContainer width="100%" height="100%">
