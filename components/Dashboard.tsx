@@ -13,7 +13,6 @@ import { SalesModal } from './sales/SalesModal';
 import { ExpensesModal } from './expenses/ExpensesModal';
 import { FundingModal } from './funding/FundingModal';
 import { ProductList } from './products/ProductList';
-import { InstallPWA } from './InstallPWA';
 import { AdminDashboard } from './AdminDashboard';
 import { Card } from './ui/Card';
 import { LockIcon } from './ui/Icons';
@@ -259,7 +258,6 @@ export const Dashboard: React.FC = () => {
         </div>
       </main>
 
-      <InstallPWA />
 
       <SalesModal
         isOpen={isSaleModalOpen}
