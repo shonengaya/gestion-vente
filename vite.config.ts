@@ -27,13 +27,13 @@ export default defineConfig(({ mode }) => {
           scope: '/',
           icons: [
             {
-              src: 'https://ui-avatars.com/api/?name=P5&background=10b981&color=fff&size=192&rounded=true&bold=true',
+              src: '/icons/icon-192x192.png',
               sizes: '192x192',
               type: 'image/png',
               purpose: 'any maskable'
             },
             {
-              src: 'https://ui-avatars.com/api/?name=P5&background=10b981&color=fff&size=512&rounded=true&bold=true',
+              src: '/icons/icon-512x512.png',
               sizes: '512x512',
               type: 'image/png',
               purpose: 'any maskable'
