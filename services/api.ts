@@ -113,6 +113,122 @@ export const getExpenses = async (): Promise<Expense[]> => {
   return data || [];
 };
 
+// --- Categories Operations ---
+
+export const getCategories = async () => {
+  const { data, error } = await supabase
+    .from('categories')
+    .select('*')
+    .order('name');
+  if (error) throw error;
+  return data || [];
+};
+
+export const addCategory = async (category: any) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Non authentifié");
+
+  const { data, error } = await supabase
+    .from('categories')
+    .insert([{ ...category, user_id: user.id }])
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const updateCategory = async (id: string, updates: any) => {
+  const { data, error } = await supabase.from('categories').update(updates).eq('id', id).select().single();
+  if (error) throw error;
+  return data;
+};
+
+export const deleteCategory = async (id: string) => {
+  const { error } = await supabase.from('categories').delete().eq('id', id);
+  if (error) throw error;
+};
+
+// --- Budgets Operations ---
+
+export const getBudgets = async () => {
+  const { data, error } = await supabase.from('budgets').select('*');
+  if (error) throw error;
+  return data || [];
+};
+
+export const addBudget = async (budget: any) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Non authentifié");
+
+  const { data, error } = await supabase
+    .from('budgets')
+    .insert([{ ...budget, user_id: user.id }])
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const upsertBudget = async (budget: any) => {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Non authentifié");
+
+  // Use upsert with onConflict to update existing budgets
+  const { data, error } = await supabase
+    .from('budgets')
+    .upsert(
+      { ...budget, user_id: user.id },
+      {
+        onConflict: 'user_id,category_id,period_type,start_date',
+        ignoreDuplicates: false
+      }
+    )
+    .select()
+    .single();
+  if (error) throw error;
+  return data;
+};
+
+export const updateBudget = async (id: string, updates: any) => {
+  const { data, error } = await supabase.from('budgets').update(updates).eq('id', id).select().single();
+  if (error) throw error;
+  return data;
+};
+
+export const createRecurringBudgets = async (
+  categoryId: string,
+  amount: number,
+  startDate: string,
+  endDate: string,
+  weekdays: number[]
+) => {
+  const { error } = await supabase.rpc('create_recurring_budgets', {
+    p_category_id: categoryId,
+    p_amount: amount,
+    p_start_date: startDate,
+    p_end_date: endDate,
+    p_selected_weekdays: weekdays
+  });
+
+  if (error) throw error;
+};
+
+export const deleteBudget = async (id: string) => {
+  const { error } = await supabase.from('budgets').delete().eq('id', id);
+  if (error) throw error;
+};
+
+export const getBudgetSummary = async (periodType: string, startDate: string, endDate: string) => {
+  const { data, error } = await supabase
+    .rpc('get_budget_summary', {
+      p_period_type: periodType,
+      p_start_date: startDate,
+      p_end_date: endDate
+    });
+  if (error) throw error;
+  return data || [];
+};
+
 // --- Analytics & Aggregations ---
 
 // Helper to filter data client-side for immediate reactivity

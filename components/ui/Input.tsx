@@ -11,7 +11,7 @@ export const Input: React.FC<InputProps> = ({ label, rightElement, className = '
       <label className="text-sm font-semibold text-gray-700 ml-1">{label}</label>
       <div className="relative">
         <input
-          className={`w-full bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all ${rightElement ? 'pr-10' : ''} ${className}`}
+          className={`w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all ${rightElement ? 'pr-10' : ''} ${className}`}
           {...props}
         />
         {rightElement && (
@@ -34,7 +34,7 @@ export const Select: React.FC<SelectProps> = ({ label, options, className = '', 
     <div className="flex flex-col gap-1 mb-4">
       <label className="text-sm font-semibold text-gray-700 ml-1">{label}</label>
       <select
-        className={`bg-gray-50 border border-gray-200 rounded-lg px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-brand-500/20 focus:border-brand-500 transition-all ${className}`}
+        className={`bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all ${className}`}
         {...props}
       >
         <option value="" disabled>Choisir...</option>

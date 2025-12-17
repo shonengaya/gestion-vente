@@ -11,6 +11,7 @@ export interface Sale {
   created_at: string;
 }
 
+
 export interface Expense {
   id: string;
   user_id: string;
@@ -18,7 +19,40 @@ export interface Expense {
   amount: number;
   date: string;
   created_at: string;
+  category_id?: string; // New field
 }
+
+export interface Category {
+  id: string;
+  user_id: string;
+  name: string;
+  color?: string;
+  icon?: string;
+}
+
+export type PeriodType = 'day' | 'week' | 'month' | 'quarter' | 'semester' | 'year';
+
+export interface Budget {
+  id: string;
+  user_id: string;
+  category_id: string;
+  amount: number;
+  period_type: PeriodType;
+  start_date: string;
+}
+
+export interface BudgetSummary {
+  budget_id?: string; // Optional because a category might not have a budget yet
+  category_id: string;
+  category_name: string;
+  category_color: string;
+  planned_amount: number;
+  spent_amount: number;
+  remaining_amount: number;
+  percentage_used: number;
+  is_extrapolated?: boolean;
+}
+
 
 export interface DateFilter {
   startDate: string;

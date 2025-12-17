@@ -70,7 +70,7 @@ export const Auth: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-gray-50 relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-[#F5F6FA] relative overflow-hidden">
       <div className="absolute top-[-20%] right-[-10%] w-[500px] h-[500px] bg-blue-200/40 rounded-full blur-[120px]" />
       <div className="absolute bottom-[-20%] left-[-10%] w-[500px] h-[500px] bg-slate-200/40 rounded-full blur-[120px]" />
 
@@ -83,7 +83,7 @@ export const Auth: React.FC = () => {
             <div className="bg-gray-800 rounded-full w-full h-full"></div>
           </div>
           <h1 className="text-3xl font-bold text-slate-900 tracking-tight">Prolow5</h1>
-          <p className="text-gray-500 mt-2 font-medium">Votre excellence financière</p>
+          <p className="text-xs text-gray-400 font-medium mt-1">Gestion de ventes et de budget</p>
         </div>
 
         <form onSubmit={handleAuth}>
