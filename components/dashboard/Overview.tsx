@@ -91,28 +91,34 @@ export const Overview: React.FC<OverviewProps> = ({
             <div className="grid grid-cols-2 sm:grid-cols-2 xl:grid-cols-4 gap-3 md:gap-6 mb-8">
                 <KPI
                     title="Total Ventes"
-                    value={formatAriary(totals.sales).replace('Ar', '')}
+                    value={totals.sales}
+                    isCurrency={true}
+                    details={salesHistory}
                     color="text-emerald-600"
                     icon={TrendUpIcon}
                     trend="up"
                 />
                 <KPI
-                    title="Trésorerie Dispo." // Replaced Transactions
-                    value={formatAriary(totals.treasury).replace('Ar', '')}
+                    title="Trésorerie Dispo."
+                    value={totals.treasury}
+                    isCurrency={true}
                     color="text-indigo-600"
                     icon={WalletIcon}
                     trend="up"
                 />
                 <KPI
                     title="Total Dépenses"
-                    value={formatAriary(totals.expenses).replace('Ar', '')}
+                    value={totals.expenses}
+                    isCurrency={true}
+                    details={expensesHistory}
                     color="text-red-600"
                     icon={TrendDownIcon}
                     trend="down"
                 />
                 <KPI
                     title="Bénéfice Net"
-                    value={formatAriary(totals.net).replace('Ar', '')}
+                    value={totals.net}
+                    isCurrency={true}
                     color="text-slate-800"
                     icon={PackageIcon}
                     trend="up"
