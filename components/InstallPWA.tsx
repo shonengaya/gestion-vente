@@ -2,55 +2,61 @@ import React, { useEffect, useState } from 'react';
 import { Card } from './ui/Card';
 
 export const InstallPWA = () => {
-    const [supportsPWA, setSupportsPWA] = useState(false);
     const [promptInstall, setPromptInstall] = useState<any>(null);
     const [isIOS, setIsIOS] = useState(false);
     const [showInstructions, setShowInstructions] = useState(false);
     const [showButton, setShowButton] = useState(false);
+    const [debugInfo, setDebugInfo] = useState('');
 
     useEffect(() => {
+        // Check if already installed
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            console.log('[PWA] Already installed (standalone mode)');
+            setShowButton(false);
+            return;
+        }
+
         // Detect iOS
         const userAgent = window.navigator.userAgent.toLowerCase();
         const isIOSDevice = /iphone|ipad|ipod/.test(userAgent);
         setIsIOS(isIOSDevice);
 
-        // Always show on iOS (manual install only)
+        console.log('[PWA] Checking installability...');
+        console.log('[PWA] iOS device:', isIOSDevice);
+        console.log('[PWA] Standalone mode:', window.matchMedia('(display-mode: standalone)').matches);
+
+        // On iOS, always show manual instructions button
         if (isIOSDevice) {
+            console.log('[PWA] iOS detected - showing manual install button');
             setShowButton(true);
+            setDebugInfo('iOS - Manual only');
         }
 
         const handler = (e: any) => {
             e.preventDefault();
-            // Double check standalone status before enabling
-            if (!window.matchMedia('(display-mode: standalone)').matches) {
-                setSupportsPWA(true);
-                setPromptInstall(e);
-                setShowButton(true); // Ready to install!
-            }
+            console.log('[PWA] ✅ beforeinstallprompt fired! Auto-install available.');
+            setPromptInstall(e);
+            setShowButton(true);
+            setDebugInfo('Auto-install ready');
         };
 
-        // Fallback: If no event fires after 10s, show button anyway (maybe manual needed)
-        const timer = setTimeout(() => {
-            if (!window.matchMedia('(display-mode: standalone)').matches) {
-                setSupportsPWA(true);
-                setShowButton(true);
-            }
-        }, 10000);
-
-        // Check if already in standalone mode
-        if (window.matchMedia('(display-mode: standalone)').matches) {
-            setSupportsPWA(false);
-            setShowButton(false);
-        }
-
+        // Listen for the install prompt
         window.addEventListener('beforeinstallprompt', handler);
 
+        // Fallback for non-iOS: show button after 5s if no prompt (for manual installation via menu)
+        const timer = setTimeout(() => {
+            if (!isIOSDevice && !promptInstall) {
+                console.log('[PWA] No beforeinstallprompt after 5s. Showing manual instructions button.');
+                setShowButton(true);
+                setDebugInfo('Manual fallback (no auto)');
+            }
+        }, 5000);
+
         const appInstalledHandler = () => {
-            setSupportsPWA(false);
+            console.log('[PWA] App installed successfully!');
             setPromptInstall(null);
             setShowInstructions(false);
             setShowButton(false);
-            console.log("PWA Installed");
         };
 
         window.addEventListener('appinstalled', appInstalledHandler);
@@ -64,19 +70,23 @@ export const InstallPWA = () => {
 
     const onClick = async (evt: React.MouseEvent) => {
         evt.preventDefault();
+        console.log('[PWA] Install button clicked. promptInstall:', !!promptInstall);
+
         if (promptInstall) {
+            console.log('[PWA] Triggering native install prompt...');
             promptInstall.prompt();
             const { outcome } = await promptInstall.userChoice;
+            console.log('[PWA] User choice:', outcome);
             if (outcome === 'accepted') {
-                setSupportsPWA(false);
+                setShowButton(false);
             }
         } else {
-            // Manual instructions
+            console.log('[PWA] No native prompt available. Showing manual instructions.');
             setShowInstructions(true);
         }
     };
 
-    // Don't show anything if running in standalone
+    // Don't render if in standalone mode
     if (typeof window !== 'undefined' && window.matchMedia('(display-mode: standalone)').matches) {
         return null;
     }
@@ -85,10 +95,11 @@ export const InstallPWA = () => {
 
     return (
         <>
-            {/* Install Button (Always visible on mobile/web if not installed, trigger prompt or instructions) */}
+            {/* Install Button */}
             <button
                 className="fixed bottom-24 right-4 md:bottom-6 md:right-6 z-40 bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-3 rounded-xl shadow-lg shadow-emerald-500/30 flex items-center gap-2 animate-bounce hover:animate-none transition-all"
                 onClick={onClick}
+                title={debugInfo}
             >
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" viewBox="0 0 256 256">
                     <path d="M224,144v64a8,8,0,0,1-8,8H40a8,8,0,0,1-8-8V144a8,8,0,0,1,16,0v56H208V144a8,8,0,0,1,16,0Zm-101.66,5.66a8,8,0,0,0,11.32,0l40-40a8,8,0,0,0-11.32-11.32L136,124.69V32a8,8,0,0,0-16,0v92.69L93.66,98.34a8,8,0,0,0-11.32,11.32Z"></path>
